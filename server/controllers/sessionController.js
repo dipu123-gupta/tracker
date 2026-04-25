@@ -13,11 +13,15 @@ exports.createSession = async (req, res) => {
         });
 
         await newSession.save();
+        const baseUrl = process.env.CLIENT_URL?.endsWith('/') 
+            ? process.env.CLIENT_URL.slice(0, -1) 
+            : (process.env.CLIENT_URL || 'http://localhost:5173');
+
         res.status(201).json({ 
             success: true, 
             sessionId,
-            shareUrl: `${process.env.CLIENT_URL}/share/${sessionId}`,
-            dashboardUrl: `${process.env.CLIENT_URL}/dashboard/${sessionId}`
+            shareUrl: `${baseUrl}/#/share/${sessionId}`,
+            dashboardUrl: `${baseUrl}/#/dashboard/${sessionId}`
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

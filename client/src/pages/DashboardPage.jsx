@@ -84,7 +84,7 @@ const DashboardPage = () => {
     }, [sessionId, soundEnabled, navigate]);
 
     const copyLink = () => {
-        const shareUrl = `${window.location.origin}/share/${sessionId}`;
+        const shareUrl = `${window.location.origin}/#/share/${sessionId}`;
         navigator.clipboard.writeText(shareUrl);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
