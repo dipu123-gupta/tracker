@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import 'leaflet/dist/leaflet.css';
 
 @theme {
   --color-primary-50: #f0f9ff;
@@ -12,8 +13,6 @@
   --color-primary-800: #075985;
   --color-primary-900: #0c4a6e;
 }
-
-@import 'leaflet/dist/leaflet.css';
 
 :root {
   font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
