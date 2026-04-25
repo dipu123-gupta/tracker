@@ -62,7 +62,7 @@ const DashboardPage = () => {
 
         fetchSession();
 
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.PROD ? 'https://trackers-oplf.onrender.com' : 'http://localhost:5000');
         socketRef.current = io(socketUrl);
         socketRef.current.emit('join-session', sessionId);
 

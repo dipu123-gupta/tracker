@@ -30,7 +30,8 @@ const SharePage = () => {
         fetchSession();
 
         // Connect to socket for real-time updates
-        socketRef.current = io('http://localhost:5000');
+        const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.PROD ? 'https://trackers-oplf.onrender.com' : 'http://localhost:5000');
+        socketRef.current = io(socketUrl);
         socketRef.current.emit('join-session', sessionId);
 
         return () => {

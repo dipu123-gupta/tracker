@@ -15,6 +15,7 @@ const server = http.createServer(app);
 // CORS Configuration
 const allowedOrigins = [
     process.env.CLIENT_URL,
+    "https://tracker-3-2lcg.onrender.com",
     "http://localhost:5173",
     "http://localhost:5174"
 ].filter(Boolean);
