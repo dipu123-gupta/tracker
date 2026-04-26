@@ -180,9 +180,9 @@ const DashboardPage = () => {
             </header>
 
             {/* Main Content */}
-            <main className="flex-1 flex flex-col md:flex-row overflow-hidden p-4 gap-4">
-                {/* Sidebar */}
-                <div className="w-full md:w-80 space-y-4 overflow-y-auto custom-scrollbar">
+            <main className="flex-1 flex flex-col md:flex-row overflow-hidden p-2 md:p-4 gap-3 md:gap-4">
+                {/* Sidebar - On top for mobile, left for desktop */}
+                <div className="w-full md:w-80 space-y-3 md:space-y-4 overflow-y-auto custom-scrollbar order-2 md:order-1 max-h-[40vh] md:max-h-full">
                     {/* Address Card */}
                     <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
                         <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
@@ -257,7 +257,7 @@ const DashboardPage = () => {
                 </div>
 
                 {/* Map Container */}
-                <div className="flex-1 bg-slate-900 rounded-2xl shadow-inner border border-slate-800 overflow-hidden relative min-h-[400px]">
+                <div className="flex-1 bg-slate-900 rounded-2xl shadow-inner border border-slate-800 overflow-hidden relative min-h-[50vh] md:min-h-[400px] order-1 md:order-2">
                     <MapContainer 
                         center={currentLocation || [20, 0]} 
                         zoom={currentLocation ? 16 : 3} 
