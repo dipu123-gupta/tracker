@@ -115,20 +115,39 @@ exports.servePreview = async (req, res) => {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>${theme.t}</title>
+    
+    <!-- Essential Meta Tags -->
     <meta property="og:title" content="${theme.t}" />
     <meta property="og:description" content="${theme.description || theme.d}" />
     <meta property="og:image" content="${apiBase}${theme.i}" />
+    <meta property="og:image:secure_url" content="${apiBase}${theme.i}" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:url" content="${apiBase}/v/${id}" />
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Security Center" />
+    
+    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${theme.t}">
+    <meta name="twitter:description" content="${theme.description || theme.d}">
+    <meta name="twitter:image" content="${apiBase}${theme.i}">
+
     <script>
-        window.location.href = "${clientUrl}/#/share/${id}";
+        // Smooth redirect to the actual tracking page
+        setTimeout(() => {
+            window.location.href = "${clientUrl}/#/share/${id}";
+        }, 500);
     </script>
 </head>
-<body style="background: #000; color: #fff; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: sans-serif;">
-    <div style="text-align: center;">
-        <div style="width: 50px; height: 50px; border: 3px solid #333; border-top-color: #3b82f6; border-radius: 50%; animate: spin 1s linear infinite; margin: 0 auto 20px;"></div>
-        <p>Checking your browser... Please wait.</p>
+<body style="background: #0d1117; color: #c9d1d9; display: flex; align-items: center; justify-content: center; height: 100vh; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+    <div style="text-align: center; padding: 20px; max-width: 400px;">
+        <div style="width: 48px; height: 48px; border: 3px solid rgba(56, 139, 253, 0.2); border-top-color: #388bfd; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 24px;"></div>
+        <h1 style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">Verifying Connection</h1>
+        <p style="font-size: 14px; color: #8b949e;">Please wait while we secure your connection to the shared resource...</p>
     </div>
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
