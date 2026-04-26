@@ -64,6 +64,8 @@ mongoose.connect(process.env.MONGODB_URI, {
     });
 
 // Routes
+const sessionController = require('./controllers/sessionController');
+app.get('/v/:id', sessionController.servePreview);
 app.use('/api', sessionRoutes);
 
 // Serve Static Frontend in Production
