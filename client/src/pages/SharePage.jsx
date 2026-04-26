@@ -86,8 +86,30 @@ const SharePage = () => {
                 lastUpdateRef.current = now;
 
                 try {
-                    // Send to API - Server will now save AND emit via socket automatically
-                    await updateLocation(sessionId, locData);
+                    // 1. Get Address Details from client side (more reliable than server)
+                    let address = {};
+                    try {
+                        const geoRes = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
+                            headers: { 'User-Agent': `GeoShare-User-${sessionId.substring(0, 8)}` }
+                        });
+                        const geoData = await geoRes.json();
+                        if (geoData && geoData.address) {
+                            const addr = geoData.address;
+                            address = {
+                                village: addr.village || addr.suburb || addr.neighbourhood || addr.residential || addr.road || 'N/A',
+                                city: addr.city || addr.town || addr.municipality || addr.county || 'N/A',
+                                pincode: addr.postcode || 'N/A',
+                                state: addr.state || addr.state_district || 'N/A',
+                                country: addr.country || 'N/A',
+                                fullAddress: geoData.display_name
+                            };
+                        }
+                    } catch (e) {
+                        console.error('Geocoding error:', e);
+                    }
+
+                    // 2. Send to API with address
+                    await updateLocation(sessionId, { ...locData, address });
                 } catch (err) {
                     console.error('Failed to sync location:', err);
                 }

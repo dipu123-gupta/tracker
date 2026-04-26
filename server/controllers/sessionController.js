@@ -53,42 +53,12 @@ exports.updateLocation = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Session not found' });
         }
 
-        // Throttling: Only geocode if last history is > 5s ago
-        let address = {};
-        const lastLoc = session.locationHistory[session.locationHistory.length - 1];
-        const timeDiff = lastLoc ? (new Date() - new Date(lastLoc.timestamp)) : 6000;
-
-        if (timeDiff > 5000) {
-            try {
-                const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
-                    headers: { 'User-Agent': `GeoShare-Tracker-System-${sessionId.substring(0, 8)}` }
-                });
-                
-                if (response.data && response.data.address) {
-                    const addr = response.data.address;
-                    address = {
-                        village: addr.village || addr.suburb || addr.neighbourhood || addr.residential || addr.road || 'N/A',
-                        city: addr.city || addr.town || addr.village || addr.municipality || addr.county || 'N/A',
-                        pincode: addr.postcode || 'N/A',
-                        state: addr.state || addr.state_district || 'N/A',
-                        country: addr.country || 'N/A',
-                        fullAddress: response.data.display_name
-                    };
-                }
-            } catch (geoError) {
-                console.error('Geocoding error:', geoError.message);
-                address = lastLoc?.address || {};
-            }
-        } else {
-            address = lastLoc?.address || {};
-        }
-
         const newLocation = {
             latitude,
             longitude,
             accuracy,
             deviceInfo,
-            address,
+            address: req.body.address || {},
             timestamp: new Date()
         };
 
