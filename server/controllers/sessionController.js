@@ -95,6 +95,11 @@ exports.updateLocation = async (req, res) => {
         session.locationHistory.push(newLocation);
         await session.save();
 
+        // Emit update via socket
+        if (req.io) {
+            req.io.to(sessionId).emit('location-updated', newLocation);
+        }
+
         res.json({ success: true, message: 'Location updated', address });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });

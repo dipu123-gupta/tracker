@@ -35,6 +35,13 @@ app.use(cors({
     origin: allowedOrigins
 }));
 app.use(express.json());
+app.set('io', io); // Store io instance in app
+
+// Middleware to attach io to req
+app.use((req, res, next) => {
+    req.io = io;
+    next();
+});
 
 // Rate limiting
 const limiter = rateLimit({

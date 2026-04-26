@@ -41,7 +41,10 @@ const SharePage = () => {
         fetchSession();
 
         // Connect to socket for real-time updates
-        const socketUrl = import.meta.env.VITE_SOCKET_URL || (import.meta.env.PROD ? 'https://trackers-oplf.onrender.com' : 'http://localhost:5000');
+        const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const socketUrl = (!isLocalhost && import.meta.env.PROD) 
+            ? 'https://trackers-oplf.onrender.com' 
+            : (import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000');
         socketRef.current = io(socketUrl);
         socketRef.current.emit('join-session', sessionId);
 
@@ -77,14 +80,8 @@ const SharePage = () => {
                 setLocation(locData);
                 
                 try {
-                    // 1. Send to API and get address details
-                    const { data } = await updateLocation(sessionId, locData);
-                    
-                    // 2. Send via Socket for real-time with address
-                    socketRef.current.emit('update-location', {
-                        ...locData,
-                        address: data.address
-                    });
+                    // Send to API - Server will now save AND emit via socket automatically
+                    await updateLocation(sessionId, locData);
                 } catch (err) {
                     console.error('Failed to sync location:', err);
                 }
