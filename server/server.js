@@ -17,6 +17,7 @@ const server = http.createServer(app);
 const allowedOrigins = [
     process.env.CLIENT_URL,
     "https://tracker-3-2lcg.onrender.com",
+    "https://video-o6nd.onrender.com",
     "http://localhost:5173",
     "http://localhost:5174"
 ].filter(Boolean);
