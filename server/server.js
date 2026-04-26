@@ -13,6 +13,9 @@ const sessionRoutes = require('./routes/sessionRoutes');
 const app = express();
 const server = http.createServer(app);
 
+// Static Previews (Must be before other routes)
+app.use('/previews', express.static(path.join(__dirname, '../client/public/previews')));
+
 // CORS Configuration
 const allowedOrigins = [
     process.env.CLIENT_URL,
@@ -32,6 +35,7 @@ const io = new Server(server, {
 // Middleware
 app.use(helmet({
     contentSecurityPolicy: false, // For Leaflet maps
+    crossOriginResourcePolicy: false, // For previews and images
 }));
 app.use(cors({
     origin: allowedOrigins
