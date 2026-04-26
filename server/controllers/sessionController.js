@@ -112,20 +112,21 @@ exports.servePreview = async (req, res) => {
 
         const html = `
 <!DOCTYPE html>
-<html>
+<html prefix="og: http://ogp.me/ns#">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${theme.t}</title>
     
-    <!-- Essential Meta Tags -->
-    <meta property="og:title" content="${theme.t}" />
-    <meta property="og:description" content="${theme.description || theme.d}" />
+    <!-- Instagram/Facebook Priority Tags -->
     <meta property="og:image" content="${apiBase}${theme.i}" />
     <meta property="og:image:secure_url" content="${apiBase}${theme.i}" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:type" content="image/jpeg" />
+    
+    <title>${theme.t}</title>
+    <meta property="og:title" content="${theme.t}" />
+    <meta property="og:description" content="${theme.description || theme.d}" />
     <meta property="og:url" content="${apiBase}/v/${id}" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Security Center" />
