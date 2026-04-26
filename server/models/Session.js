@@ -28,11 +28,11 @@ const SessionSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true },
     isOnline: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now },
-    // Auto-delete session after 48 hours (TTL)
+    // Auto-delete session after 5 days (TTL)
     expiresAt: { 
         type: Date, 
-        default: () => new Date(+new Date() + 48*60*60*1000),
-        index: { expires: '48h' } 
+        default: () => new Date(+new Date() + 5*24*60*60*1000),
+        index: { expireAfterSeconds: 0 } 
     }
 });
 

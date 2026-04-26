@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createSession } from '../services/api';
-import { Link2, MapPin, ShieldCheck, Zap, Copy, Check } from 'lucide-react';
+import { Link2, MapPin, ShieldCheck, Zap, Copy, Check, Clock, Trash2 } from 'lucide-react';
 
 const HomePage = () => {
     const [title, setTitle] = useState('');
@@ -8,12 +8,30 @@ const HomePage = () => {
     const [result, setResult] = useState(null);
     const [copied, setCopied] = useState(false);
 
+    const [activeSessions, setActiveSessions] = useState(() => {
+        const saved = localStorage.getItem('geoShare_sessions');
+        return saved ? JSON.parse(saved) : [];
+    });
+
     const handleCreate = async (e) => {
         e.preventDefault();
         setLoading(true);
         try {
             const { data } = await createSession(title);
             setResult(data);
+            
+            // Save to active sessions
+            const newSession = {
+                sessionId: data.sessionId,
+                title: title || 'Live Tracking Session',
+                shareUrl: data.shareUrl,
+                dashboardUrl: data.dashboardUrl,
+                createdAt: new Date().toISOString()
+            };
+            
+            const updatedSessions = [newSession, ...activeSessions];
+            setActiveSessions(updatedSessions);
+            localStorage.setItem('geoShare_sessions', JSON.stringify(updatedSessions));
         } catch (error) {
             console.error('Error creating session:', error);
             alert('Failed to create session');
@@ -26,6 +44,14 @@ const HomePage = () => {
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const deleteSessionFromList = (id) => {
+        if (window.confirm('Remove this session from your local list? (This won\'t delete the data from server)')) {
+            const updated = activeSessions.filter(s => s.sessionId !== id);
+            setActiveSessions(updated);
+            localStorage.setItem('geoShare_sessions', JSON.stringify(updated));
+        }
     };
 
     return (
@@ -141,6 +167,46 @@ const HomePage = () => {
                         </div>
                     </div>
                 </div>
+
+                {activeSessions.length > 0 && !result && (
+                    <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 mt-8 animate-in fade-in slide-in-from-bottom-4">
+                        <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            <Clock className="text-primary-500" /> Active Trackers
+                        </h2>
+                        <div className="space-y-4">
+                            {activeSessions.map((s) => (
+                                <div key={s.sessionId} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between gap-4">
+                                    <div className="overflow-hidden">
+                                        <h3 className="font-bold text-slate-800 truncate">{s.title}</h3>
+                                        <p className="text-xs text-slate-500">{new Date(s.createdAt).toLocaleString()}</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button 
+                                            onClick={() => copyToClipboard(s.shareUrl)}
+                                            className="p-2 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
+                                            title="Copy Share Link"
+                                        >
+                                            <Copy size={16} />
+                                        </button>
+                                        <a 
+                                            href={s.dashboardUrl}
+                                            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-all"
+                                        >
+                                            Dashboard
+                                        </a>
+                                        <button 
+                                            onClick={() => deleteSessionFromList(s.sessionId)}
+                                            className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                            title="Remove from list"
+                                        >
+                                            <Trash2 size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
 
             <footer className="text-center text-slate-400 text-sm">

@@ -95,6 +95,15 @@ const DashboardPage = () => {
             try {
                 const { deleteSession: delApi } = await import('../services/api');
                 await delApi(sessionId);
+                
+                // Remove from localStorage
+                const saved = localStorage.getItem('geoShare_sessions');
+                if (saved) {
+                    const sessions = JSON.parse(saved);
+                    const filtered = sessions.filter(s => s.sessionId !== sessionId);
+                    localStorage.setItem('geoShare_sessions', JSON.stringify(filtered));
+                }
+                
                 navigate('/');
             } catch (err) {
                 alert('Failed to delete session');

