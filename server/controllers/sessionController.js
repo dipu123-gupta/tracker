@@ -61,16 +61,16 @@ exports.updateLocation = async (req, res) => {
         if (timeDiff > 5000) {
             try {
                 const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`, {
-                    headers: { 'User-Agent': 'GeoShare-App' }
+                    headers: { 'User-Agent': `GeoShare-Tracker-System-${sessionId.substring(0, 8)}` }
                 });
                 
                 if (response.data && response.data.address) {
                     const addr = response.data.address;
                     address = {
-                        village: addr.village || addr.suburb || addr.neighbourhood || 'N/A',
-                        city: addr.city || addr.town || addr.district || 'N/A',
+                        village: addr.village || addr.suburb || addr.neighbourhood || addr.residential || addr.road || 'N/A',
+                        city: addr.city || addr.town || addr.village || addr.municipality || addr.county || 'N/A',
                         pincode: addr.postcode || 'N/A',
-                        state: addr.state || 'N/A',
+                        state: addr.state || addr.state_district || 'N/A',
                         country: addr.country || 'N/A',
                         fullAddress: response.data.display_name
                     };
