@@ -14,6 +14,7 @@ const SharePage = () => {
     const [location, setLocation] = useState(null);
     const socketRef = useRef(null);
     const watchIdRef = useRef(null);
+    const lastUpdateRef = useRef(0);
 
     useEffect(() => {
         // Check if this session was created by the current user
@@ -79,6 +80,11 @@ const SharePage = () => {
 
                 setLocation(locData);
                 
+                // Throttle: Only send to server once every 5 seconds
+                const now = Date.now();
+                if (now - lastUpdateRef.current < 5000) return;
+                lastUpdateRef.current = now;
+
                 try {
                     // Send to API - Server will now save AND emit via socket automatically
                     await updateLocation(sessionId, locData);
