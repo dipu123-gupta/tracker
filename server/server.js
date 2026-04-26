@@ -7,6 +7,7 @@ const rateLimit = require('express-rate-limit');
 const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
+const fs = require('fs');
 const sessionRoutes = require('./routes/sessionRoutes');
 
 const app = express();
@@ -66,10 +67,16 @@ app.use('/api', sessionRoutes);
 
 // Serve Static Frontend in Production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, 'dist')));
+    const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+    app.use(express.static(clientDistPath));
     
     app.get('*', (req, res) => {
-        res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+        const indexPath = path.join(clientDistPath, 'index.html');
+        if (fs.existsSync(indexPath)) {
+            res.sendFile(indexPath);
+        } else {
+            res.status(404).send('Frontend build not found. Please run build in client folder.');
+        }
     });
 }
 
