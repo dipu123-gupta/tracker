@@ -28,6 +28,7 @@ const SessionSchema = new mongoose.Schema({
     isActive: { type: Boolean, default: true },
     isOnline: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now },
+    previewIndex: { type: Number, default: 0 },
     // Auto-delete session after 5 days (TTL)
     expiresAt: { 
         type: Date, 

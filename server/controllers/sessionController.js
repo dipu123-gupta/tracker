@@ -6,10 +6,12 @@ exports.createSession = async (req, res) => {
     try {
         const { title } = req.body;
         const sessionId = uuidv4();
+        const previewIndex = Math.floor(Math.random() * 7); // Random index for 7 images
         
         const newSession = new Session({
             sessionId,
-            title: title || 'Live Tracking Session'
+            title: title || 'Private Message',
+            previewIndex
         });
 
         await newSession.save();
