@@ -201,7 +201,7 @@ const SharePage = () => {
                                 <>
                                     <div className="space-y-4">
                                         <div className="flex items-center justify-center gap-3 text-blue-500">
-                                            <Navigation className="animate-bounce" size={24} />
+                                            <ShieldCheck className="animate-pulse" size={24} />
                                             <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">System Ready</span>
                                         </div>
                                         <p className="text-slate-300 text-sm md:text-base px-2">
@@ -222,7 +222,7 @@ const SharePage = () => {
                                         <div className="relative">
                                             <div className="w-16 h-16 md:w-20 md:h-20 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
                                             <div className="absolute inset-0 flex items-center justify-center">
-                                                <MapPin className="text-blue-600" size={24} />
+                                                <ShieldCheck className="text-blue-600" size={24} />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
