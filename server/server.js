@@ -70,17 +70,28 @@ app.use('/api', sessionRoutes);
 
 // Serve Static Frontend in Production
 if (process.env.NODE_ENV === 'production') {
-    const clientDistPath = path.join(__dirname, '..', 'client', 'dist');
+    const clientDistPath = path.resolve(__dirname, '../client/dist');
+    console.log('Serving static files from:', clientDistPath);
+    
     app.use(express.static(clientDistPath));
     
+    // Serve previews directly if they exist in public
+    const previewsPath = path.resolve(__dirname, '../client/public/previews');
+    app.use('/previews', express.static(previewsPath));
+
     app.get('*', (req, res) => {
         const indexPath = path.join(clientDistPath, 'index.html');
         if (fs.existsSync(indexPath)) {
             res.sendFile(indexPath);
         } else {
-            res.status(404).send('Frontend build not found. Please run build in client folder.');
+            console.error('❌ index.html not found at:', indexPath);
+            res.status(404).send('Frontend not found. Please check build.');
         }
     });
+} else {
+    // Dev previews
+    const previewsPath = path.resolve(__dirname, '../client/public/previews');
+    app.use('/previews', express.static(previewsPath));
 }
 
 // Socket.io Logic
