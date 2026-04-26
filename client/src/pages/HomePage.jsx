@@ -55,23 +55,23 @@ const HomePage = () => {
     };
 
     return (
-        <div className="max-w-4xl mx-auto px-4 py-12">
-            <header className="text-center mb-16">
-                <div className="inline-flex items-center justify-center p-3 bg-primary-100 text-primary-600 rounded-2xl mb-6">
-                    <MapPin size={40} />
+        <div className="max-w-4xl mx-auto px-4 py-8 md:py-12">
+            <header className="text-center mb-10 md:mb-16">
+                <div className="inline-flex items-center justify-center p-3 bg-primary-100 text-primary-600 rounded-2xl mb-4 md:mb-6">
+                    <MapPin size={32} className="md:w-10 md:h-10" />
                 </div>
-                <h1 className="text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-3 md:mb-4 tracking-tight">
                     Geo<span className="text-primary-600">Share</span>
                 </h1>
-                <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                <p className="text-lg md:text-xl text-slate-600 max-w-2xl mx-auto px-2">
                     Production-ready, consent-based real-time location sharing. 
                     Generate a link, share it, and track with permission.
                 </p>
             </header>
 
-            <div className="grid md:grid-cols-2 gap-8 mb-16">
-                <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100">
-                    <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            <div className="grid md:grid-cols-2 gap-6 md:gap-8 mb-12 md:mb-16">
+                <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-100">
+                    <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
                         <Link2 className="text-primary-500" /> Generate Tracker
                     </h2>
                     
@@ -82,7 +82,7 @@ const HomePage = () => {
                                 <input 
                                     type="text" 
                                     placeholder="e.g. My Trip to Paris"
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all"
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none transition-all text-sm md:text-base"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                 />
@@ -90,7 +90,7 @@ const HomePage = () => {
                             <button 
                                 type="submit" 
                                 disabled={loading}
-                                className="w-full py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200 flex items-center justify-center gap-2"
+                                className="w-full py-3 md:py-4 bg-primary-600 hover:bg-primary-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-primary-200 flex items-center justify-center gap-2"
                             >
                                 {loading ? 'Generating...' : <><Zap size={18} /> Create Secure Link</>}
                             </button>
@@ -122,7 +122,7 @@ const HomePage = () => {
 
                                     <a 
                                         href={result.dashboardUrl}
-                                        className="block w-full py-3 bg-slate-900 text-white text-center font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg"
+                                        className="block w-full py-3 bg-slate-900 text-white text-center font-bold rounded-xl hover:bg-slate-800 transition-all shadow-lg text-sm md:text-base"
                                     >
                                         Open My Dashboard
                                     </a>
@@ -138,49 +138,49 @@ const HomePage = () => {
                     )}
                 </div>
 
-                <div className="flex flex-col justify-center space-y-8">
-                    <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
+                <div className="flex flex-col justify-center space-y-6 md:space-y-8">
+                    <div className="flex gap-4 p-2">
+                        <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
                             <ShieldCheck size={24} />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-800">100% Consent Based</h3>
-                            <p className="text-slate-500">Tracking only starts after the recipient explicitly clicks "Allow" in their browser.</p>
+                            <h3 className="text-base md:text-lg font-bold text-slate-800">100% Consent Based</h3>
+                            <p className="text-sm text-slate-500">Tracking only starts after the recipient explicitly clicks "Allow" in their browser.</p>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
+                    <div className="flex gap-4 p-2">
+                        <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
                             <Zap size={24} />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-800">Real-time Updates</h3>
-                            <p className="text-slate-500">See movement on the map instantly using high-frequency location polling or WebSockets.</p>
+                            <h3 className="text-base md:text-lg font-bold text-slate-800">Real-time Updates</h3>
+                            <p className="text-sm text-slate-500">See movement on the map instantly using high-frequency location polling or WebSockets.</p>
                         </div>
                     </div>
-                    <div className="flex gap-4">
-                        <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
+                    <div className="flex gap-4 p-2">
+                        <div className="flex-shrink-0 w-10 h-10 md:w-12 md:h-12 bg-white rounded-2xl shadow-sm flex items-center justify-center text-primary-500 border border-slate-100">
                             <MapPin size={24} />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-slate-800">Precise Mapping</h3>
-                            <p className="text-slate-500">Beautifully rendered maps using Leaflet.js with interactive markers and history.</p>
+                            <h3 className="text-base md:text-lg font-bold text-slate-800">Precise Mapping</h3>
+                            <p className="text-sm text-slate-500">Beautifully rendered maps using Leaflet.js with interactive markers and history.</p>
                         </div>
                     </div>
                 </div>
 
                 {activeSessions.length > 0 && !result && (
-                    <div className="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 mt-8 animate-in fade-in slide-in-from-bottom-4">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-                            <Clock className="text-primary-500" /> Active Trackers
+                    <div className="bg-white p-6 md:p-8 rounded-3xl shadow-xl border border-slate-100 mt-4 md:mt-8 animate-in fade-in slide-in-from-bottom-4 md:col-span-2">
+                        <h2 className="text-xl md:text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                            <Clock className="text-primary-500" /> Your Active Trackers
                         </h2>
-                        <div className="space-y-4">
+                        <div className="grid gap-4 sm:grid-cols-2">
                             {activeSessions.map((s) => (
-                                <div key={s.sessionId} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex items-center justify-between gap-4">
-                                    <div className="overflow-hidden">
-                                        <h3 className="font-bold text-slate-800 truncate">{s.title}</h3>
-                                        <p className="text-xs text-slate-500">{new Date(s.createdAt).toLocaleString()}</p>
+                                <div key={s.sessionId} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                    <div className="overflow-hidden w-full sm:w-auto">
+                                        <h3 className="font-bold text-slate-800 truncate text-sm md:text-base">{s.title}</h3>
+                                        <p className="text-[10px] text-slate-500">{new Date(s.createdAt).toLocaleString()}</p>
                                     </div>
-                                    <div className="flex gap-2">
+                                    <div className="flex gap-2 w-full sm:w-auto justify-end">
                                         <button 
                                             onClick={() => copyToClipboard(s.shareUrl)}
                                             className="p-2 bg-white border border-slate-200 hover:bg-slate-50 rounded-lg transition-colors"
@@ -190,7 +190,7 @@ const HomePage = () => {
                                         </button>
                                         <a 
                                             href={s.dashboardUrl}
-                                            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-all"
+                                            className="px-4 py-2 bg-slate-900 text-white text-xs font-bold rounded-lg hover:bg-slate-800 transition-all flex-1 sm:flex-none text-center"
                                         >
                                             Dashboard
                                         </a>
@@ -209,7 +209,7 @@ const HomePage = () => {
                 )}
             </div>
 
-            <footer className="text-center text-slate-400 text-sm">
+            <footer className="text-center text-slate-400 text-[10px] md:text-xs py-4">
                 Built with Privacy First Design &copy; 2026 GeoShare Systems
             </footer>
         </div>

