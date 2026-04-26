@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "Root manager for GeoShare Tracker",
   "scripts": {
-    "install:all": "cd client && npm install && cd ../server && npm install",
-    "build:all": "cd client && npm install && npm run build && cd ../server && npm install",
+    "install:all": "cd client && npm install --production=false && cd ../server && npm install",
+    "build:all": "cd client && npm install --production=false && npm run build && cd ../server && npm install",
     "start:server": "npm start --prefix server",
     "dev": "concurrently \"npm run dev --prefix client\" \"npm run dev --prefix server\""
   },
