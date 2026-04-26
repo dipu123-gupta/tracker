@@ -192,31 +192,33 @@ const DashboardPage = () => {
                             <div className="space-y-4">
                                 <div className="p-4 bg-blue-600/5 border border-blue-500/20 rounded-xl">
                                     <label className="text-[9px] uppercase font-black text-blue-500/60 block mb-1">Current Village / suburb</label>
-                                    <p className="text-sm font-bold text-white">{history[history.length - 1].address.village}</p>
+                                    <p className="text-sm font-bold text-white">{history[history.length - 1].address?.village || 'Unknown'}</p>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl">
                                         <label className="text-[9px] uppercase font-black text-slate-500 block mb-1">Pincode</label>
-                                        <p className="text-xs font-mono font-bold text-slate-300">{history[history.length - 1].address.pincode}</p>
+                                        <p className="text-xs font-mono font-bold text-slate-300">{history[history.length - 1].address?.pincode || 'N/A'}</p>
                                     </div>
                                     <div className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl">
                                         <label className="text-[9px] uppercase font-black text-slate-500 block mb-1">State Code</label>
-                                        <p className="text-xs font-bold text-slate-300">{history[history.length - 1].address.state.substring(0, 5)}</p>
+                                        <p className="text-xs font-bold text-slate-300">
+                                            {history[history.length - 1].address?.state?.substring(0, 5) || 'N/A'}
+                                        </p>
                                     </div>
                                 </div>
 
                                 <div className="p-3 bg-slate-800/50 border border-slate-700 rounded-xl">
                                     <label className="text-[9px] uppercase font-black text-slate-500 block mb-1">City & Region</label>
                                     <p className="text-xs font-bold text-slate-300">
-                                        {history[history.length - 1].address.city}, {history[history.length - 1].address.state}
+                                        {history[history.length - 1].address?.city || 'N/A'}, {history[history.length - 1].address?.state || 'N/A'}
                                     </p>
                                 </div>
 
                                 <div className="p-3 bg-amber-500/5 border border-amber-500/20 rounded-xl">
                                     <label className="text-[9px] uppercase font-black text-amber-500/60 block mb-1">Full Identified Address</label>
                                     <p className="text-[10px] text-slate-400 leading-relaxed font-medium">
-                                        {history[history.length - 1].address.fullAddress}
+                                        {history[history.length - 1].address?.fullAddress || 'Address not found'}
                                     </p>
                                 </div>
                             </div>
